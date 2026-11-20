@@ -1,11 +1,17 @@
 <?php
 require_once 'connexion.php';
  
-// TODO 1 (Ex 7) : Récupérer tous les patients de la table 'personnes' dans un tableau $personnes
-$personnes = [];
- 
-// TODO 2 (Ex 7) : Récupérer l'historique des mesures avec le nom du patient (INNER JOIN) dans $mesures
-$mesures = [];
+// Ex 7 : Récupérer tous les patients de la table 'personnes'
+$personnes = $pdo->query("SELECT id, nom, prenom FROM personnes ORDER BY nom, prenom")
+                 ->fetchAll(PDO::FETCH_ASSOC);
+
+// Ex 7 : Récupérer l'historique des mesures avec le nom du patient (INNER JOIN)
+$mesures = $pdo->query("SELECT m.id, p.nom, p.prenom, m.poids, m.taille, m.imc,
+                               m.categorie, m.date_mesure
+                        FROM mesures m
+                        INNER JOIN personnes p ON m.personne_id = p.id
+                        ORDER BY m.date_mesure DESC, m.id DESC")
+               ->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -13,8 +19,8 @@ $mesures = [];
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calculateur d'IMC</title>
-    <link rel="stylesheet" href="css/style.css">
-    <script src="js/script.js" defer></script>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
 </head>
 <body>
     <header>
@@ -24,13 +30,16 @@ $mesures = [];
     <main>
         <section>
             <h2>Saisie</h2>
-            <!-- TODO 3 (Ex 7) : Ajouter action="ajouter.php" et method="POST" sur le formulaire -->
-            <form class="imc">
+            <form class="imc" action="ajouter.php" method="POST">
                 <label>
                     Personne
                     <select name="personne_id" required>
                         <option value="">-- Choisir --</option>
-                        <!-- TODO 4 (Ex 7 & 8) : Boucler sur $personnes pour générer les <option> (n'oubliez pas htmlspecialchars) -->
+                        <?php foreach ($personnes as $p): ?>
+                            <option value="<?= (int) $p['id'] ?>">
+                                <?= htmlspecialchars($p['nom'] . ' ' . $p['prenom']) ?>
+                            </option>
+                        <?php endforeach; ?>
                     </select>
                 </label>
  
@@ -49,6 +58,7 @@ $mesures = [];
                     <button type="submit">Enregistrer la mesure</button>
                 </div>
             </form>
+            <p id="imc-erreur"></p>
         </section>
  
         <section>
@@ -72,8 +82,20 @@ $mesures = [];
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- TODO 5 (Ex 7 & 8) : Boucler sur $mesures pour afficher chaque ligne <tr> -->
-                    <!-- N'oubliez pas le lien : <a href="supprimer.php?id=...">Supprimer</a> -->
+                    <?php foreach ($mesures as $m): ?>
+                        <tr>
+                            <td><?= htmlspecialchars($m['nom'] . ' ' . $m['prenom']) ?></td>
+                            <td><?= htmlspecialchars($m['poids']) ?></td>
+                            <td><?= htmlspecialchars($m['taille']) ?></td>
+                            <td><?= htmlspecialchars($m['imc']) ?></td>
+                            <td><?= htmlspecialchars($m['categorie']) ?></td>
+                            <td><?= htmlspecialchars($m['date_mesure']) ?></td>
+                            <td>
+                                <a href="supprimer.php?id=<?= (int) $m['id'] ?>"
+                                   onclick="return confirm('Supprimer cette mesure ?');">Supprimer</a>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
                 </tbody>
             </table>
         </section>

@@ -1,3 +1,4 @@
+/* 1. Mise en forme générale de la page */
 body {
     font-family: sans-serif;
     max-width: 420px;
@@ -5,6 +6,7 @@ body {
     padding: 0 16px;
 }
 
+/* 2. Organisation des éléments du formulaire */
 .imc {
     display: flex;
     flex-direction: column;
@@ -12,29 +14,58 @@ body {
     margin-bottom: 24px;
 }
 
+/* 3. Organisation des étiquettes et des champs */
 label {
     display: flex;
     justify-content: space-between;
     gap: 8px;
 }
 
-input {
+/* 4. Dimensions des champs de saisie */
+input,
+select {
     width: 120px;
 }
 
-/* Pour aller plus loin */
+/* 5. Présentation des boutons */
 button {
     padding: 8px 12px;
     cursor: pointer;
 }
 
+/* 6. En-tête et pied de page */
 header,
 footer {
     text-align: center;
     color: #555;
 }
 
+/* 7. Mise en valeur des résultats */
 #imc-valeur,
 #imc-categorie {
     font-size: 1.2em;
+}
+
+/* 8. Message d'erreur */
+#imc-erreur {
+    color: #c0392b;
+    font-weight: bold;
+}
+
+/* 9. Tableau de l'historique (partie B) */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9em;
+}
+
+th,
+td {
+    border: 1px solid #ccc;
+    padding: 6px;
+    text-align: left;
+}
+
+th {
+    background: #f0f0f0;
 }
